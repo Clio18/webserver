@@ -1,4 +1,4 @@
-package com.obolonyk.webserver;
+package com.obolonyk.webserver.entity;
 
 import java.util.Map;
 

@@ -1,5 +1,6 @@
 package com.obolonyk.webserver;
 
+import com.obolonyk.webserver.entity.Request;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.obolonyk.webserver.RequestParser.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RequestParserTest {
@@ -24,7 +26,8 @@ class RequestParserTest {
                 "Host: www.tutorialspoint.com\n" +
                 "Accept-Language: en-us\n" +
                 "Accept-Encoding: gzip, deflate\n" +
-                "Connection: Keep-Alive";
+                "Connection: Keep-Alive\r\n";
+
         expectedHeaders = new HashMap<>();
         expectedHeaders.put("User-Agent", "Mozilla/4.0 (compatible; MSIE5.01; Windows NT)\n");
         expectedHeaders.put("Host", "www.tutorialspoint.com\n");
@@ -39,7 +42,7 @@ class RequestParserTest {
         byte[] bytes = req.getBytes();
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)));
         Request request = new Request();
-        RequestParser.injectUriAndMethod(bufferedReader, request);
+        injectUriAndMethod(bufferedReader, request);
         String expectedHttpMethod = "GET";
         String expectedUri = "/hello.htm";
         assertEquals(expectedHttpMethod, request.getHttpMethod().toString());
@@ -53,7 +56,7 @@ class RequestParserTest {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)));
         Request request = new Request();
         bufferedReader.readLine();
-        RequestParser.injectHeaders(bufferedReader, request);
+        injectHeaders(bufferedReader, request);
         assertArrayEquals(expectedHeaders.keySet().toArray(), request.getHeaders().keySet().toArray());
     }
 
@@ -63,8 +66,8 @@ class RequestParserTest {
         byte[] bytes = req.getBytes();
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)));
         Request request = new Request();
-        RequestParser.injectUriAndMethod(bufferedReader, request);
-        RequestParser.injectHeaders(bufferedReader, request);
+        injectUriAndMethod(bufferedReader, request);
+        injectHeaders(bufferedReader, request);
         String expectedHttpMethod = "GET";
         String expectedUri = "/hello.htm";
         assertEquals(expectedHttpMethod, request.getHttpMethod().toString());
@@ -77,12 +80,34 @@ class RequestParserTest {
     void testParseRequest () throws IOException {
         byte[] bytes = req.getBytes();
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)));
-        Request request = RequestParser.parseRequest(bufferedReader);
+        Request request = parseRequest(bufferedReader);
         String expectedHttpMethod = "GET";
         String expectedUri = "/hello.htm";
         assertEquals(expectedHttpMethod, request.getHttpMethod().toString());
         assertEquals(expectedUri, request.getUri());
         assertArrayEquals(expectedHeaders.keySet().toArray(), request.getHeaders().keySet().toArray());
+    }
+
+    @Test
+    @DisplayName("test FillMapHeaders With Normal Key Value Header")
+    void testFillMapHeadersWithNormalKeyValueHeader(){
+        String line = "User-Agent: Mozilla/4.0 (compatible MSIE5.01; Windows NT)\n";
+        Map<String, String> expectedMap = new HashMap<>();
+        Map<String, String> actualMap = new HashMap<>();
+        expectedMap.put("User-Agent", ": Mozilla/4.0 (compatible MSIE5.01; Windows NT)\n");
+        fillMapHeaders(actualMap, line);
+        assertEquals(expectedMap, actualMap);
+    }
+
+    @Test
+    @DisplayName("test FillMapHeaders With Normal Key Value Header")
+    void testFillMapHeadersWithHeaderInOneLine(){
+        String line = "User-Agent\n";
+        Map<String, String> expectedMap = new HashMap<>();
+        Map<String, String> actualMap = new HashMap<>();
+        expectedMap.put("User-Agent\n", "");
+        fillMapHeaders(actualMap, line);
+        assertEquals(expectedMap, actualMap);
     }
 
 }

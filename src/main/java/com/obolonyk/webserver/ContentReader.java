@@ -10,7 +10,12 @@ public class ContentReader {
     }
 
     Reader readContent(String uri) throws FileNotFoundException {
-        return readContent(new FileInputStream(new File(webAppPath, uri)));
+        File file = new File(webAppPath, uri);
+        if (file.exists()) {
+            return readContent(new FileInputStream(file));
+        } else {
+            return null;
+        }
     }
 
     Reader readContent(InputStream inputStream) {

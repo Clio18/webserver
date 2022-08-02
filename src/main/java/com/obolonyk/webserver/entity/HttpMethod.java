@@ -1,4 +1,4 @@
-package com.obolonyk.webserver;
+package com.obolonyk.webserver.entity;
 
 public enum HttpMethod {
     GET,

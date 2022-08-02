@@ -1,4 +1,4 @@
-package com.obolonyk.webserver;
+package com.obolonyk.webserver.entity;
 
 import java.io.Reader;
 
@@ -12,5 +12,13 @@ public class Response {
 
     public void setContent(Reader content) {
         this.content = content;
+    }
+
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
+    }
+
+    public Reader getContent() {
+        return content;
     }
 }

@@ -1,5 +1,9 @@
 package com.obolonyk.webserver;
 
+import com.obolonyk.webserver.entity.HttpStatus;
+import com.obolonyk.webserver.entity.Request;
+import com.obolonyk.webserver.entity.Response;
+
 import java.io.*;
 
 public class RequestHandler {
