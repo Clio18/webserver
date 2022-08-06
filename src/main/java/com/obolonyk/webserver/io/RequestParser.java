@@ -1,4 +1,4 @@
-package com.obolonyk.webserver;
+package com.obolonyk.webserver.io;
 
 import com.obolonyk.webserver.entity.HttpMethod;
 import com.obolonyk.webserver.entity.Request;
@@ -17,7 +17,7 @@ public class RequestParser {
         return request;
     }
 
-    static void injectUriAndMethod(BufferedReader reader, Request request) throws IOException {
+    public static void injectUriAndMethod(BufferedReader reader, Request request) throws IOException {
         String line = reader.readLine();
         String[] strings = line.split(" ");
         if (strings[0].equals(HttpMethod.GET.toString())) {
@@ -26,7 +26,7 @@ public class RequestParser {
         request.setUri(strings[1]);
     }
 
-    static void injectHeaders(BufferedReader reader, Request request) throws IOException {
+    public static void injectHeaders(BufferedReader reader, Request request) throws IOException {
         Map<String, String> headers = new HashMap<>();
         for (String line = reader.readLine(); line!=null; line = reader.readLine()) {
             if (line.equals("")){
@@ -37,7 +37,7 @@ public class RequestParser {
         request.setHeaders(headers);
     }
 
-    static void fillMapHeaders(Map<String, String> headers, String line) {
+    public static void fillMapHeaders(Map<String, String> headers, String line) {
         int index = line.indexOf(":");
         String keyLine = line;
         String headerLine = "";

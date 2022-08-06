@@ -1,16 +1,16 @@
 package com.obolonyk.webserver.entity;
 
-import java.io.Reader;
+import java.io.InputStream;
 
 public class Response {
     private HttpStatus httpStatus;
-    private Reader content;
+    private InputStream content;
 
     public void setHttpStatus(HttpStatus httpStatus) {
         this.httpStatus = httpStatus;
     }
 
-    public void setContent(Reader content) {
+    public void setContent(InputStream content) {
         this.content = content;
     }
 
@@ -18,7 +18,7 @@ public class Response {
         return httpStatus;
     }
 
-    public Reader getContent() {
+    public InputStream getContent() {
         return content;
     }
 }

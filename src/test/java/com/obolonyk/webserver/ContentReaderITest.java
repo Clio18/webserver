@@ -1,11 +1,10 @@
 package com.obolonyk.webserver;
 
+import com.obolonyk.webserver.io.ContentReader;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -16,8 +15,8 @@ class ContentReaderITest {
         String expected = "Hello";
         String uri = "/text.txt";
         ContentReader contentReader = new ContentReader("src/test/resources");
-        Reader reader = contentReader.readContent(uri);
-        BufferedReader bufferedReader = new BufferedReader(reader);
+        InputStream reader = contentReader.readContent(uri);
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(reader));
         String actual = bufferedReader.readLine();
         assertEquals(expected, actual);
     }

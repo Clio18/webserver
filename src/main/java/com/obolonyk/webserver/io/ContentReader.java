@@ -1,4 +1,4 @@
-package com.obolonyk.webserver;
+package com.obolonyk.webserver.io;
 
 import java.io.*;
 
@@ -9,17 +9,17 @@ public class ContentReader {
         this.webAppPath = webAppPath;
     }
 
-    Reader readContent(String uri) throws FileNotFoundException {
+   public InputStream readContent(String uri) throws FileNotFoundException {
         File file = new File(webAppPath, uri);
         if (file.exists()) {
-            return readContent(new FileInputStream(file));
+            return new FileInputStream(file);
         } else {
             return null;
         }
     }
 
-    Reader readContent(InputStream inputStream) {
-        return new InputStreamReader(inputStream);
+   public InputStream readContent(InputStream inputStream){
+        return inputStream;
     }
 
 }

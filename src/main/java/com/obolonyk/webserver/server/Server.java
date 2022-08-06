@@ -1,4 +1,7 @@
-package com.obolonyk.webserver;
+package com.obolonyk.webserver.server;
+
+import com.obolonyk.webserver.io.ContentReader;
+import com.obolonyk.webserver.handler.RequestHandler;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -16,12 +19,12 @@ public class Server {
         this.contentReader = contentReader;
     }
 
-    void start() throws IOException {
+    public void start() throws IOException {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             while (true) {
                 try (Socket socket = serverSocket.accept();
                      BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                     BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
+                     OutputStream writer = socket.getOutputStream()) {
                     RequestHandler requestHandler = new RequestHandler(reader, writer, contentReader);
                     requestHandler.handle();
                 }

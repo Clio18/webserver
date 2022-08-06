@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.obolonyk.webserver.RequestParser.*;
+import static com.obolonyk.webserver.io.RequestParser.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RequestParserTest {

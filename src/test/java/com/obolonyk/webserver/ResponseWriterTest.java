@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.*;
 
-import static com.obolonyk.webserver.ResponseWriter.writeErrorResponse;
-import static com.obolonyk.webserver.ResponseWriter.writeResponse;
+import static com.obolonyk.webserver.io.ResponseWriter.writeErrorResponse;
+import static com.obolonyk.webserver.io.ResponseWriter.writeResponse;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ResponseWriterTest {
@@ -19,12 +19,11 @@ class ResponseWriterTest {
         String expectedResponse = "HTTP/1.1 200 OK\r\n\r\n" + content;
         Response response = new Response();
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-             Writer writer = new OutputStreamWriter(byteArrayOutputStream);
-             Reader reader = new InputStreamReader(new ByteArrayInputStream(content.getBytes()));) {
+             InputStream reader = new ByteArrayInputStream(content.getBytes())) {
             response.setHttpStatus(HttpStatus.OK);
             response.setContent(reader);
-            writeResponse(writer, response);
-            writer.flush();
+            writeResponse(byteArrayOutputStream, response);
+            byteArrayOutputStream.flush();
             String actualResponse = byteArrayOutputStream.toString();
             assertEquals(expectedResponse, actualResponse);
         }
@@ -35,10 +34,9 @@ class ResponseWriterTest {
     void testWriteErrorResponse() throws IOException {
         String expectedResponse = "HTTP/1.1 "  + HttpStatus.NOT_FOUND.getCode() + " "
                 + HttpStatus.NOT_FOUND.getMessage() + "\r\n";
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-             Writer writer = new OutputStreamWriter(byteArrayOutputStream)) {
-            writeErrorResponse(writer, HttpStatus.NOT_FOUND);
-            writer.flush();
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();){
+            writeErrorResponse(byteArrayOutputStream, HttpStatus.NOT_FOUND);
+            byteArrayOutputStream.flush();
             String actualResponse = byteArrayOutputStream.toString();
             assertEquals(expectedResponse, actualResponse);
         }

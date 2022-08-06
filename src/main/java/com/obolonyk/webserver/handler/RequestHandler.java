@@ -1,5 +1,8 @@
-package com.obolonyk.webserver;
+package com.obolonyk.webserver.handler;
 
+import com.obolonyk.webserver.io.ContentReader;
+import com.obolonyk.webserver.io.RequestParser;
+import com.obolonyk.webserver.io.ResponseWriter;
 import com.obolonyk.webserver.entity.HttpStatus;
 import com.obolonyk.webserver.entity.Request;
 import com.obolonyk.webserver.entity.Response;
@@ -8,26 +11,27 @@ import java.io.*;
 
 public class RequestHandler {
     private BufferedReader bufferedReader;
-    private BufferedWriter bufferedWriter;
+    private OutputStream outputStream;
     private ContentReader contentReader;
 
-    public RequestHandler(BufferedReader bufferedReader, BufferedWriter bufferedWriter, ContentReader contentReader) {
+    public RequestHandler(BufferedReader bufferedReader, OutputStream outputStream, ContentReader contentReader) {
         this.bufferedReader = bufferedReader;
-        this.bufferedWriter = bufferedWriter;
+        this.outputStream = outputStream;
         this.contentReader = contentReader;
     }
 
-    void handle() throws IOException {
+    public void handle() throws IOException {
         Request request = RequestParser.parseRequest(bufferedReader);
-        Reader reader = contentReader.readContent(request.getUri());
+        InputStream reader = contentReader.readContent(request.getUri());
         ResponseWriter responseWriter = new ResponseWriter();
         if (reader!=null){
         Response response = new Response();
         response.setHttpStatus(HttpStatus.OK);
+
         response.setContent(reader);
-        responseWriter.writeResponse(bufferedWriter, response);
+        responseWriter.writeResponse(outputStream, response);
         } else {
-            responseWriter.writeErrorResponse(bufferedWriter, HttpStatus.NOT_FOUND);
+            responseWriter.writeErrorResponse(outputStream, HttpStatus.NOT_FOUND);
         }
     }
 }
